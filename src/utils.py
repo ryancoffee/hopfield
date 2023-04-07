@@ -4,6 +4,9 @@ import numpy as np
 
 rng = np.random.default_rng()
 
+def energy(W,s,theta):
+    return -0.5 * np.sum(np.inner(W,s)) + np.inner(s,theta)
+
 def closeEnough(x,y,thresh=.95):
     t = thresh*(x.size)
     return np.sum((x==y).astype(int))>t

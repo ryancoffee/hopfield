@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-from utils import closeEnough,bool2pm,pm2bool
+from utils import closeEnough,bool2pm,pm2bool,energy
 
 class HopfieldNetwork_bool:
     def __init__(self,sz):
@@ -51,6 +51,42 @@ class HopfieldNetwork:
         print(np.sum(pattern))
         return pattern
 
+class HopfieldNetwork_theta:
+    def __init__(self,sz):
+        self.sz = sz
+        self.weights = np.zeros((sz,sz),dtype=float)
+        self.theta = []
+        self.max_iterations = 500
 
+    def train(self,patterns):
+        nP,nN = patterns.shape
+        print(self.weights.shape)
+        assert nN==self.sz
+        for pattern in patterns:
+            self.weights += np.outer(pattern,pattern)
+            np.fill_diagonal(self.weights,self.sz)
+        self.weights /= nP
+        self.theta = -np.mean(self.weights,axis=1)
+        return self
+
+    def recall(self,pattern):
+        s = np.copy(pattern)
+        for i in range(self.max_iterations):
+            olden = energy(self.weights,s,self.theta)
+            news = np.sign(np.inner(self.weights,s) + self.theta)
+            newen = energy(self.weights,news,self.theta)
+            if closeEnough(olden,newen):
+                #print(olden,newen)
+                break
+            else:
+                s = np.copy(news)
+        print('%i\t%f'%(i,np.sum(s)))
+        return s
+
+    def set_max_iter(self,x):
+        self.max_iterations = int(x)
+        return self
+        
+        
         
 
