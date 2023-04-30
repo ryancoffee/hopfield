@@ -4,6 +4,13 @@ import numpy as np
 
 rng = np.random.default_rng()
 
+def lorentz(x,c,w,a):
+    return a/(np.power((x-c),int(2)) + w)
+
+def gauss(x,c,w,a):
+    return a*np.exp(-1*np.power((x-x0)/w,int(2)))
+
+
 def energy(W,s,theta):
     return -0.5 * np.sum(np.inner(W,s)) + np.inner(s,theta)
 
